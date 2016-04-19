@@ -1,0 +1,25 @@
+package com.sample
+ 
+import com.sample.domain.Message;
+ 
+rule "Hello World"
+    when
+        $m : Message( status == Message.HELLO, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        modify($m) {
+            setMessage( "Goodbye cruel world" ),
+            setStatus( Message.GOODBYE )
+        }
+end
+
+rule "GoodBye"
+    when
+        $m : Message( status == Message.GOODBYE, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        modify($m) {
+            /*setStatus( -1 ),*/
+            setMessage( "Died" )
+        }
+end

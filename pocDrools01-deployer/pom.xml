@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>pocDrools01</groupId>
+    <artifactId>pocDrools01-deployer</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.axcessfinancial.drools</groupId>
+                <artifactId>axcess-drools-guvnor-deployer-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>guvnor-deployer</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webAppUrl>http://chq02-i2bpm01-dev2.cngfinancial.com:8080/drools-guvnor/rest/packages/</webAppUrl>
+                    <userGuvnor>guvnor</userGuvnor>
+                    <passGuvnor>123456</passGuvnor>
+                    <artifactRules>
+                        <artifactItem>
+                            <groupId>pocDrools01</groupId>
+                            <artifactId>pocDrools01-rules</artifactId>
+                            <version>1.0.0</version>
+                            <!-- <type>jar</type> -->
+                        </artifactItem>
+                    </artifactRules>
+                    <artifactModels>
+                        <artifactItem>
+                            <groupId>pocDrools01</groupId>
+                            <artifactId>pocDrools01-model</artifactId>
+                            <version>1.0.0</version>
+                            <!-- <type>jar</type> -->
+                        </artifactItem>
+                    </artifactModels>
+                    <!-- <artifactRules> -->
+                    <!-- <artifactItem> -->
+                    <!-- <groupId>[ groupId ]</groupId> -->
+                    <!-- <artifactId>[ artifactId ]</artifactId> -->
+                    <!-- <version>[ version ]</version> -->
+                    <!-- <type>[ packaging ]</type> -->
+                    <!-- </artifactItem> -->
+                    <!-- </artifactRules> -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

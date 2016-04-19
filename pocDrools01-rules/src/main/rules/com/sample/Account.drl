@@ -1,0 +1,22 @@
+//created on: 07/04/2016
+package com.sample;
+
+//list any import classes here.
+import com.sample.domain.Account;
+
+
+//declare any global variables here
+
+
+
+
+rule "accountBalanceAtLeast"
+
+    when
+        //conditions
+        $account : Account( balance < 100 )
+    then
+        //actions
+        System.out.println("Warning! money running out!");
+end
+

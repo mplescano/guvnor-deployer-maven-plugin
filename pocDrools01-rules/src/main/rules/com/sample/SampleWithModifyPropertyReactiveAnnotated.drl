@@ -1,0 +1,24 @@
+package com.sample
+ 
+import com.sample.domain.AnnotatedMessage;
+ 
+rule "Hello World"
+    when
+        $m : AnnotatedMessage( status == AnnotatedMessage.HELLO, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        modify($m) {
+            setMessage( "Goodbye cruel world" ),
+            setStatus( AnnotatedMessage.GOODBYE )
+        }
+end
+
+rule "GoodBye"
+    when
+        $m : AnnotatedMessage( status == AnnotatedMessage.GOODBYE, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        modify($m) {
+            setMessage( "Died" )
+        }
+end

@@ -1,0 +1,21 @@
+package com.sample
+ 
+import com.sample.domain.ListenerSupportMessage;
+ 
+rule "Hello World"
+    when
+        $m : ListenerSupportMessage( status == ListenerSupportMessage.HELLO, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        $m.setMessage( "Goodbye cruel world" );
+        $m.setStatus( ListenerSupportMessage.GOODBYE );
+        ///*update( $m );*/
+end
+
+rule "GoodBye"
+    when
+        $m : ListenerSupportMessage( status == ListenerSupportMessage.GOODBYE, $myMessage : message )
+    then
+        System.out.println( $myMessage );
+        $m.setMessage("Died");
+end

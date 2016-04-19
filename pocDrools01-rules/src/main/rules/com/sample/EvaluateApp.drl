@@ -1,0 +1,33 @@
+//created on: 08/04/2016
+package com.sample
+
+//list any import classes here.
+import com.sample.domain.Applicant;
+import com.sample.domain.Application;
+
+
+//declare any global variables here
+
+
+
+
+rule "Is of valid age"
+
+    when
+        //conditions
+        $a : Applicant( age < 18 )
+    then
+        //actions
+        $a.setValid(false);
+end
+
+rule "Application was made this year"
+    //include attributes such as "salience" here...
+    when
+        //conditions
+        $a : Application( dateApplied  > "01-jan-2009" )
+    then
+        //actions
+        $a.setValid(false);
+
+end
