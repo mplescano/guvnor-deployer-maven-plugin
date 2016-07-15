@@ -155,5 +155,10 @@
         <version>1.9.13</version>
         <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>org.drools</groupId>
+        <artifactId>drools-ant</artifactId>
+        <version>5.5.0.Final</version>
+    </dependency>
   </dependencies>
 </project>

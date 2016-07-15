@@ -41,6 +41,7 @@ import com.sample.domain.Message;
 import com.sample.domain.building.Fire;
 import com.sample.domain.building.Room;
 import com.sample.domain.building.Sprinkler;
+import com.sample.support.TestDroolsCompiler;
 
 /**
  * This is a sample class to launch a rule.
@@ -104,7 +105,7 @@ public class DroolsTest {
     public void testStateless02() {
         try {
             // load up the knowledge base
-            KnowledgeBase kbase = readKnowledgeBase("com/sample/SampleWithoutUpdate.drl");
+            KnowledgeBase kbase = readKnowledgeBase("com/sample/withoutupdate/SampleWithoutUpdate.drl");
             StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession();
             KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, "test");
             // go !
@@ -122,7 +123,7 @@ public class DroolsTest {
     public void testStateless03() {
         try {
             // load up the knowledge base
-            KnowledgeBase kbase = readKnowledgeBase("com/sample/SampleWithModify.drl");
+            KnowledgeBase kbase = readKnowledgeBase("com/sample/withmodify/SampleWithModify.drl");
             StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession();
             KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, "test");
             // go !
@@ -142,7 +143,7 @@ public class DroolsTest {
     public void testStateless04() {
         try {
             // load up the knowledge base
-            KnowledgeBase kbase = readKnowledgeBase("com/sample/SampleWithModifyInfiniteLoop.drl");
+            KnowledgeBase kbase = readKnowledgeBase("com/sample/withmodifyinfiniteloop/SampleWithModifyInfiniteLoop.drl");
             StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession();
             KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, "test");
             // go !
@@ -182,7 +183,7 @@ public class DroolsTest {
     public void testStateless06() {
         try {
             //load up the knowledge base
-            KnowledgeBaseImpl kbase = (KnowledgeBaseImpl) readKnowledgeBase("com/sample/SampleWithoutUpdateButListenerSupport.drl");
+            KnowledgeBaseImpl kbase = (KnowledgeBaseImpl) readKnowledgeBase("com/sample/listenersupport/SampleWithoutUpdateButListenerSupport.drl");
             
             StatefulSession session = kbase.ruleBase.newStatefulSession();
             WorkingMemoryFileLogger logger = new WorkingMemoryFileLogger(session);
@@ -208,7 +209,7 @@ public class DroolsTest {
     public void testStateless07() {
         try {
             //load up the knowledge base
-            KnowledgeBaseImpl kbase = (KnowledgeBaseImpl) readKnowledgeBase("com/sample/SampleWithoutUpdateButListenerSupportInferredEvaluation.drl");
+            KnowledgeBaseImpl kbase = (KnowledgeBaseImpl) readKnowledgeBase("com/sample/listenersupportinferred/SampleWithoutUpdateButListenerSupportInferredEvaluation.drl");
             
             StatefulSession session = kbase.ruleBase.newStatefulSession();
             WorkingMemoryFileLogger logger = new WorkingMemoryFileLogger(session);
@@ -238,7 +239,7 @@ public class DroolsTest {
     public void testStateless08() {
         try {
             // load up the knowledge base
-            KnowledgeBase kbase = readKnowledgeBase(new String[]{"com/sample/SampleWithoutUpdateButListenerSupportInferredEvaluation.drl", "com/sample/Declarative02.model"});
+            KnowledgeBase kbase = readKnowledgeBase(new String[]{"com/sample/listenersupportinferred/SampleWithoutUpdateButListenerSupportInferredEvaluation.drl", "com/sample/listenersupportinferred/Declarative02.model"});
             StatelessKnowledgeSession ksession = kbase.newStatelessKnowledgeSession();
             KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, "test");
             // go !
@@ -476,5 +477,13 @@ public class DroolsTest {
         KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
         kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
         return kbase;
+    }
+    
+    @Test
+    public void test08() throws Exception {
+        TestDroolsCompiler compiler = new TestDroolsCompiler(TestDroolsCompiler.PACKAGE_BIN_FORMAT, TestDroolsCompiler.KNOWLEDGE_BUILDER_TYPE);
+        compiler.compile("src/main/rules", "com.sample", "target/rules");
+        
+        //
     }
 }

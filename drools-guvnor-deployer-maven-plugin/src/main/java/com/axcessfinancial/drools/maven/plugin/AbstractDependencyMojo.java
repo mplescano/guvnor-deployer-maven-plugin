@@ -23,6 +23,10 @@ import org.apache.maven.shared.artifact.resolve.ArtifactResolverException;
 import org.apache.maven.shared.repository.RepositoryManager;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * @author mlescano
+ *
+ */
 public abstract class AbstractDependencyMojo extends AbstractMojo {
 
     /**
@@ -57,7 +61,7 @@ public abstract class AbstractDependencyMojo extends AbstractMojo {
      *
      * @since 1.0
      */
-    @Parameter( property = "guvnor.deployer.outputDirectory", defaultValue = "${project.build.directory}/rules" )
+    @Parameter( property = "drools.unpacked.outputDirectory", defaultValue = "${project.build.directory}/rules" )
     protected File outputDirectory;
     
     /*

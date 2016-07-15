@@ -7,6 +7,10 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.shared.dependency.DependencyCoordinate;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * @author mlescano
+ *
+ */
 public class ArtifactItem implements DependencyCoordinate {
 
     /**

@@ -8,37 +8,55 @@
 
     <build>
         <plugins>
+<!--             <plugin> -->
+<!--                 <artifactId>maven-compiler-plugin</artifactId> -->
+<!--                 <version>3.1</version> -->
+<!--                 <configuration> -->
+<!--                     <source>1.6</source> -->
+<!--                     <target>1.6</target> -->
+<!--                 </configuration> -->
+<!--             </plugin> -->
             <plugin>
                 <groupId>com.axcessfinancial.drools</groupId>
                 <artifactId>axcess-drools-guvnor-deployer-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.0</version>
                 <executions>
                     <execution>
                         <phase>install</phase>
                         <goals>
-                            <goal>guvnor-deployer</goal>
+                            <goal>drools-deployer</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <webAppUrl>http://chq02-i2bpm01-dev2.cngfinancial.com:8080/drools-guvnor/rest/packages/</webAppUrl>
-                    <userGuvnor>guvnor</userGuvnor>
-                    <passGuvnor>123456</passGuvnor>
+<!--                     <webAppUrl>http://lpr01-i2bpm01-d:8080/drools-guvnor/rest/packages/</webAppUrl> -->
+<!--                     <userGuvnor>guvnor</userGuvnor> -->
+<!--                     <passGuvnor>123456</passGuvnor> -->
+                    <remoteDeployUrl>sftp://axf2348.axcess-financial.com/home/achuser/Inbox_payliance_rcc</remoteDeployUrl>
+                    <remoteDeployUser>AFORCC</remoteDeployUser>
+                    <remoteDeployPass>Admin456</remoteDeployPass>
+                    <baseInnerDir>classes/com/axcessfinancial/datareporting/platform/config/guvnor</baseInnerDir>
                     <artifactRules>
-                        <artifactItem>
-                            <groupId>pocDrools01</groupId>
-                            <artifactId>pocDrools01-rules</artifactId>
-                            <version>1.0.0</version>
+<!--                         <artifactItem> -->
+<!--                             <groupId>pocDrools01</groupId> -->
+<!--                             <artifactId>pocDrools01-rules</artifactId> -->
+<!--                             <version>1.0.0</version> -->
                             <!-- <type>jar</type> -->
+<!--                         </artifactItem> -->
+                        <artifactItem>
+                            <groupId>com.axcessfinancial.datareporting</groupId>
+                            <artifactId>axcessfinancial-datareporting-integration-platform</artifactId>
+                            <version>3.2.1.10.1.RC</version>
+                            <type>zip</type>
                         </artifactItem>
                     </artifactRules>
                     <artifactModels>
-                        <artifactItem>
-                            <groupId>pocDrools01</groupId>
-                            <artifactId>pocDrools01-model</artifactId>
-                            <version>1.0.0</version>
+<!--                         <artifactItem> -->
+<!--                             <groupId>pocDrools01</groupId> -->
+<!--                             <artifactId>pocDrools01-model</artifactId> -->
+<!--                             <version>1.0.0</version> -->
                             <!-- <type>jar</type> -->
-                        </artifactItem>
+<!--                         </artifactItem> -->
                     </artifactModels>
                     <!-- <artifactRules> -->
                     <!-- <artifactItem> -->

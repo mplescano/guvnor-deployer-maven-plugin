@@ -1,4 +1,4 @@
-package com.sample
+package com.sample.withmodifyinfiniteloop
  
 import com.sample.domain.Message;
  

@@ -12,6 +12,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.utils.io.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * @author mlescano
+ *
+ */
 public class DependencyUtil {
 
     /**

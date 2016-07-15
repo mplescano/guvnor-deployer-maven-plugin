@@ -1,4 +1,4 @@
-package com.sample
+package com.sample.withoutupdate
  
 import com.sample.domain.Message;
  
