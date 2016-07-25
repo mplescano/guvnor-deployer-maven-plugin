@@ -19,7 +19,7 @@
             <plugin>
                 <groupId>com.axcessfinancial.drools</groupId>
                 <artifactId>axcess-drools-guvnor-deployer-maven-plugin</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <executions>
                     <execution>
                         <phase>install</phase>
@@ -29,12 +29,27 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <remoteDeployHostList>
+                        <remoteDeployHost>
+                            <urlHostPath>sftp://chq02-i2esb01-d.cngfinancial.com/home/local/CNGNET/mlescano</urlHostPath>
+                            <user>mlescano</user>
+                            <pass>Qirqo2620</pass>                            
+                        </remoteDeployHost>
+                        <remoteDeployHost>
+                            <urlHostPath>sftp://chq02-i2esb02-d.cngfinancial.com/home/local/CNGNET/mlescano</urlHostPath>
+                            <user>mlescano</user>
+                            <pass>Qirqo2620</pass>                            
+                        </remoteDeployHost>
+<!--                         <remoteDeployHost> -->
+<!--                             <urlHostPath>sftp://axf2348.axcess-financial.com/home/achuser/Inbox_payliance_rcc</urlHostPath> -->
+<!--                             <user>AFORCC</user> -->
+<!--                             <pass>Admin456</pass> -->
+<!--                         </remoteDeployHost> -->
+                    </remoteDeployHostList>
 <!--                     <webAppUrl>http://lpr01-i2bpm01-d:8080/drools-guvnor/rest/packages/</webAppUrl> -->
 <!--                     <userGuvnor>guvnor</userGuvnor> -->
 <!--                     <passGuvnor>123456</passGuvnor> -->
-                    <remoteDeployUrl>sftp://axf2348.axcess-financial.com/home/achuser/Inbox_payliance_rcc</remoteDeployUrl>
-                    <remoteDeployUser>AFORCC</remoteDeployUser>
-                    <remoteDeployPass>Admin456</remoteDeployPass>
+
                     <baseInnerDir>classes/com/axcessfinancial/datareporting/platform/config/guvnor</baseInnerDir>
                     <artifactRules>
 <!--                         <artifactItem> -->

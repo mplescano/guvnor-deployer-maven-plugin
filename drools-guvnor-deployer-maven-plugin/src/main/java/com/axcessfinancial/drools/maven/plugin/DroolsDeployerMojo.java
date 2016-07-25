@@ -25,6 +25,7 @@ import org.apache.commons.vfs2.UserAuthenticator;
 import org.apache.commons.vfs2.VFS;
 import org.apache.commons.vfs2.auth.StaticUserAuthenticator;
 import org.apache.commons.vfs2.impl.DefaultFileSystemConfigBuilder;
+import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
@@ -104,22 +105,27 @@ public class DroolsDeployerMojo extends AbstractDependencyMojo {
     @Parameter( property = "drools.compiled.dir", defaultValue = "${project.build.directory}/compiledrules", required = false )
     private File compiledRulesOutputDirectory;
     
-    @Parameter( property = "drools.remote.deploy.url", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
-    private String remoteDeployUrl;
+    //@Parameter( property = "drools.remote.deploy.url", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
+    //private String remoteDeployUrl;
     
-    @Parameter( property = "drools.remote.deploy.user", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
-    private String remoteDeployUser;
+    //@Parameter( property = "drools.remote.deploy.user", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
+    //private String remoteDeployUser;
     
-    @Parameter( property = "drools.remote.deploy.pass", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
-    private String remoteDeployPass;
+    //@Parameter( property = "drools.remote.deploy.pass", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
+    //private String remoteDeployPass;
     
     @Parameter( property = "drools.base.inner.dir", /*defaultValue = "http://localhost:8080/drools-guvnor/rest/packages/",*/ required = false )
     private String baseInnerDir;
     
+    @Parameter(  )
+    private List<RemoteDeployHost> remoteDeployHostList;
+    
     @Override
     public void doExecute() throws MojoExecutionException, MojoFailureException {
 
-        if ((webAppUrl == null && remoteDeployUrl == null) || (webAppUrl != null && remoteDeployUrl != null))
+        if ((webAppUrl == null && (remoteDeployHostList == null || 
+                (remoteDeployHostList != null && remoteDeployHostList.size() == 0))) || 
+                (webAppUrl != null && remoteDeployHostList != null && remoteDeployHostList.size() > 0))
         {
             throw new MojoFailureException( "One of them is required, webAppUrl or remoteDeployUrl " );
         }
@@ -156,11 +162,15 @@ public class DroolsDeployerMojo extends AbstractDependencyMojo {
         if (baseInnerDir != null) {
             resultBaseDir = new File(outputDirectory, baseInnerDir);
         }
-        
+                        
         DirectoryScanner dirScanner = new DirectoryScanner();
         dirScanner.setBasedir(resultBaseDir);
-        dirScanner.setIncludes(includes);
-        dirScanner.setExcludes(excludes);
+        
+        if (includes!= null)
+        dirScanner.setIncludes(includes.split(","));
+        if (excludes != null)
+        dirScanner.setExcludes(excludes.split(","));
+        
         dirScanner.setCaseSensitive( true );
         dirScanner.scan();
 
@@ -301,7 +311,7 @@ public class DroolsDeployerMojo extends AbstractDependencyMojo {
                     }
                     classLoaderChild = new URLClassLoader(lstJars.toArray(new URL[lstJars.size()]), getClass().getClassLoader());
                 }
-                MavenDroolsCompiler compiler = new MavenDroolsCompiler(MavenDroolsCompiler.PACKAGE_BIN_FORMAT, MavenDroolsCompiler.KNOWLEDGE_BUILDER_TYPE, classLoaderChild);
+                MavenDroolsCompiler compiler = new MavenDroolsCompiler(MavenDroolsCompiler.PACKAGE_BIN_FORMAT, MavenDroolsCompiler.PACKAGE_BUILDER_TYPE, classLoaderChild);
                 for (java.util.Map.Entry<String, List<File>> entry : mpPackages.entrySet())
                 {
                     String packageSlashPath = entry.getKey();
@@ -312,20 +322,29 @@ public class DroolsDeployerMojo extends AbstractDependencyMojo {
                 /*if (remoteDeployUrl != null) {*/
                     FileSystemManager fsManager = null;
                     FileObject remoteDir = null;
-                    try {
-                        FileSystemOptions opts = new FileSystemOptions();
-                        if (remoteDeployUser != null && remoteDeployPass != null) {
-                            UserAuthenticator auth = new StaticUserAuthenticator(null, remoteDeployUser, remoteDeployPass);
-                            DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
+                    FileSystemOptions opts = new FileSystemOptions();
+                    for (RemoteDeployHost remoteDeployHost : remoteDeployHostList) {
+                        try {
+                            if (remoteDeployHost.getUser() != null && remoteDeployHost.getPass() != null) {
+                                UserAuthenticator auth = new StaticUserAuthenticator(null, remoteDeployHost.getUser(), remoteDeployHost.getPass());
+                                DefaultFileSystemConfigBuilder.getInstance().setUserAuthenticator(opts, auth);
+                            }
+                            if (remoteDeployHost.getUrlHostPath().startsWith("sftp")) {
+                                SftpFileSystemConfigBuilder.getInstance().setPreferredAuthentications(opts, 
+                                        "publickey,keyboard-interactive,password"); //Needed this in order to fix a
+                                        //Kerberos Login / Password issue with the upgrade from jre6 to jre8
+                                SftpFileSystemConfigBuilder.getInstance().setUserDirIsRoot(opts, false);
+                            }
+                            
+                            fsManager = VFS.getManager();
+                            remoteDir = fsManager.resolveFile(remoteDeployHost.getUrlHostPath(), opts);
+                            FileObject localDir = fsManager.resolveFile(compiledRulesOutputDirectory.getAbsolutePath());
+                            remoteDir.copyFrom(localDir, Selectors.SELECT_CHILDREN);
                         }
-                        fsManager = VFS.getManager();
-                        remoteDir = fsManager.resolveFile(remoteDeployUrl, opts);
-                        FileObject localDir = fsManager.resolveFile(compiledRulesOutputDirectory.getAbsolutePath());
-                        remoteDir.copyFrom(localDir, Selectors.SELECT_CHILDREN);
-                    }
-                    finally {
-                        if (fsManager != null && remoteDir != null) {
-                            fsManager.closeFileSystem(remoteDir.getFileSystem());
+                        finally {
+                            if (fsManager != null && remoteDir != null) {
+                                fsManager.closeFileSystem(remoteDir.getFileSystem());
+                            }
                         }
                     }
                 /*}*/

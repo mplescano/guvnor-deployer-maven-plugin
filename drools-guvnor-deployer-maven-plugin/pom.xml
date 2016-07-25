@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.axcessfinancial.drools</groupId>
     <artifactId>axcess-drools-guvnor-deployer-maven-plugin</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>maven-plugin</packaging>
     <name>maven-plugin-guvnor-deploy</name>
     <description>maven plugin for deploying drools rules into guvnor by rest api</description>
@@ -35,6 +35,18 @@
                 <!-- <phase>deploy</phase> -->
                 <!-- </execution> -->
                 <!-- </executions> -->
+                 <configuration>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

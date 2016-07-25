@@ -15,6 +15,7 @@ import java.util.Iterator;
 import org.drools.KnowledgeBase;
 import org.drools.KnowledgeBaseFactory;
 import org.drools.RuleBase;
+import org.drools.RuleBaseConfiguration;
 import org.drools.RuleBaseFactory;
 import org.drools.builder.DecisionTableConfiguration;
 import org.drools.builder.DecisionTableInputType;
@@ -219,8 +220,8 @@ public abstract class AbstractDroolsCompiler {
             while (iter.hasNext()) {
                 KnowledgePackage pkg = iter.next();
                 processPackage(pkg);
-                serializeObject(pkg, getDestFile(packageName, destdir));
             }
+            serializeObject(pkgs, getDestFile(packageName, destdir));
         } else {
             processKbase(kbase);
             // serialize the knowledge base to the destination file
@@ -257,6 +258,12 @@ public abstract class AbstractDroolsCompiler {
     }
     
     /**
+     * drools accepts the following binaries for unserialize:
+     * Collection<org.drools.definition.KnowledgePackage> pkgs
+     * org.drools.definitions.impl.KnowledgePackageImp kpkg
+     * org.drools.rule.Package pkg
+     * org.drools.rule.Package[] pkgs
+     *  
      * @param ruleBase
      * @throws FileNotFoundException
      * @throws IOException
@@ -310,13 +317,28 @@ public abstract class AbstractDroolsCompiler {
 
             } else if (droolFile.getName().endsWith(BRLFILEEXTENSION)) {
                 builder.addPackageFromBrl(ResourceFactory.newReaderResource(instream));
+            } else if (droolFile.getName().endsWith(TEMPLATERULEFILEEXTENSION)) {
+                try {
+                    InputStream ruleStream = new FileInputStream(droolFile);
+                    String dataRulesExcelFilename = droolFile.getName().substring(0, droolFile.getName().lastIndexOf('.')) + DATAXLSFILEEXTENSION;
+                    InputStream excelStream = new FileInputStream(new File(droolFile.getAbsolutePath(), dataRulesExcelFilename));
+                    ExternalSpreadsheetCompiler converter = new ExternalSpreadsheetCompiler();
+                    String generatedDrl = converter.compile(excelStream, ruleStream, 2, 2);
+                    
+                    builder.addPackageFromDrl(ResourceFactory.newReaderResource(new StringReader(generatedDrl)));
+                }
+                catch (Exception objEx) {
+                    /*getLog().info("Skipping " + resource.getName() + " because " + objEx.getMessage());
+                    continue;*/
+                }
+            } else if (droolFile.getName().endsWith(DATAXLSFILEEXTENSION)) {
+                //nothing
             } else if (droolFile.getName().endsWith(XLSFILEEXTENSION)) {
 
                 final SpreadsheetCompiler converter = new SpreadsheetCompiler();
-                final String drl = converter.compile(ResourceFactory.newFileResource(droolFile).getInputStream(),
-                        InputType.XLS);
+                final String drl = converter.compile(ResourceFactory.newFileResource(droolFile).getInputStream(), InputType.XLS);
 
-                System.out.println(drl);
+                //System.out.println(drl);
 
                 builder.addPackageFromDrl(new StringReader(drl));
 
@@ -379,7 +401,7 @@ public abstract class AbstractDroolsCompiler {
         //org.drools.rule.Package pkg = builder.getPackage();
 
         // creates the rulebase
-        RuleBase ruleBase = RuleBaseFactory.newRuleBase();
+        RuleBase ruleBase = RuleBaseFactory.newRuleBase(new RuleBaseConfiguration(loader));
 
         // adds the packages
         ruleBase.addPackages(packages);
@@ -387,8 +409,8 @@ public abstract class AbstractDroolsCompiler {
         if (PACKAGE_BIN_FORMAT.equals(binFormat)) {
             for (org.drools.rule.Package pkg : packages) {
                 processPackage(pkg);
-                serializeObject(pkg, getDestFile(packageName, destdir));
             }
+            serializeObject(packages, getDestFile(packageName, destdir));
         } else {
             processRuleBase(ruleBase);
             // serialize the rule base to the destination file
